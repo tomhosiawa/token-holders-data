@@ -18,6 +18,7 @@ else:
 
 API_HOLDERS_KEY = os.environ.get("API_HOLDERS_KEY")
 API_HOLDERS_RESOURCE = os.environ.get("API_HOLDERS_RESOURCE")
+API_HOLDERS_TOP_HOLDERS_LIMIT = os.environ.get("API_HOLDERS_TOP_HOLDERS_LIMIT")
 API_TRANSACTIONS_KEY = os.environ.get("API_TRANSACTIONS_KEY")
 API_TRANSACTIONS_RESOURCE = os.environ.get("API_TRANSACTIONS_RESOURCE")
 API_TRANSACTIONS_TYPE = os.environ.get("API_TRANSACTIONS_TYPE")
@@ -28,7 +29,7 @@ def getTokenHolders(token):
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "apiKey" : API_HOLDERS_KEY,
-    "limit" : 1000
+    "limit" : API_HOLDERS_TOP_HOLDERS_LIMIT
   }
   URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + token
   response = requests.get(URI, params=query, headers = headers)
@@ -58,14 +59,24 @@ def getHolderTransactions():
   print (response.json())
 
 
+# Return input in csv format   
+def toCSV(input):
+  print ("stub: convetToCsv")
+
+
 # Return tokens from json file
 def getTokens(filepath):
   with open(filepath) as f:
     return json.load(f)
 
 
+# Save input to disk
+def saveToFile(input, filepath):
+  print ("stub: saveToFile")
+
 
 # Main program
 tokensAddress = getTokens(TOKENS_FILEPATH)
 for token in tokensAddress:
   getTokenHolders(tokensAddress[token])
+  

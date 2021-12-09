@@ -24,7 +24,10 @@ Install python dependencies
 
     `API_TRANSACTIONS_KEY: from ethportal`
 
-2. Set type of transactions to fetch from holders
+2. (Optional) Set limit for top holders to get data on
+    API_HOLDERS_TOP_HOLDERS_LIMIT = 1000 (default)
+
+3. Set type of transactions to fetch from holders
 
     In ".env" file, paste
 
@@ -32,7 +35,7 @@ Install python dependencies
 
     For ERC20 - Token Transfer Events: `API_TRANSACTION_TYPE="tokentx"`
 
-3. Set tokens to fetch holders from
+4. Set tokens to fetch holders from
 
     Paste token's key and it's address into `tokens.json`
 
