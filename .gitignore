@@ -4,6 +4,9 @@ node_modules
 # local env files
 .env
 
+# Output files
+output
+
 # package logs
 yarn-debug.log*
 yarn-error.log*

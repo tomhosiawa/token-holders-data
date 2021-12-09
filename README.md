@@ -55,3 +55,5 @@ Development
 Production
 
 `yarn prod`
+
+CSV files are writen to OUTPUT_DIR_PATH defined in ".env"

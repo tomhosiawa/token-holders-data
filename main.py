@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import json
+import csv
 
 TOKENS_FILEPATH = "./tokens.json"
 
@@ -11,6 +12,7 @@ if os.environ.get("DEBUG").lower() == "true":
   DEBUG = True
 else:
   DEBUG = False
+OUTPUT_DIR_PATH = os.environ.get("OUTPUT_DIR_PATH")
 USER_AGENT = os.environ.get("USER_AGENT")
 
 if os.environ.get("ENV") == "PROD":
@@ -29,13 +31,14 @@ API_TRANSACTION_TYPE = os.environ.get("API_TRANSACTION_TYPE")
 
 
 # Return list of holders
-def getTokenHolders(token):
+# cbAppendtoCSV: callback function to save transactions to csv file
+def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "apiKey" : API_HOLDERS_KEY,
     "limit" : API_HOLDERS_TOP_HOLDERS_LIMIT
   }
-  URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + token
+  URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + tokenAddress
   response = requests.get(URI, params=query, headers = headers)
     
   holders = response.json()["holders"]
@@ -43,14 +46,20 @@ def getTokenHolders(token):
     holderAddress = holder["address"]
     
     if DEBUG:
-    print (">>> HOLDER: " + holderAddress)
-    getHolderTransactions(holderAddress)
-    print ("")
+      print (">>> HOLDER: " + holderAddress)
+        
+    transactions = getHolderTransactions(holderAddress)
+    cbAppendtoCSV(tokenName, holderAddress, transactions)
+    
+    if DEBUG:
+      print ("")
 
 
 # Return list of transactions
+# TODO: check if needs to do error/performance checking based on tranactions list size
 def getHolderTransactions(holderAddress):
   headers = { 'User-Agent': USER_AGENT }
+  # FIXME: go over all pages
   query = {
     "module" : "account",
     "action" : API_TRANSACTION_TYPE,
@@ -64,15 +73,34 @@ def getHolderTransactions(holderAddress):
   }
   URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
   response = requests.get(URI, params=query, headers = headers)
+  transactions = response.json()["result"]
   
   if DEBUG:
-  print (">>> Transactions of holder: " + holderAddress)
-  print (response.json())
+    print (">>> Transactions of holder: " + holderAddress)
+    print (transactions)
+    
+  return transactions
 
 
-# Return input in csv format   
-def toCSV(input):
-  print ("stub: convetToCsv")
+# Create csv file for tokenName and return it
+def createCSVFile(tokenName):
+  outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
+  outFile.write("blockNumber,timeStamp,hash,nonce,blockHash,transactionIndex,from,to,value,gas,gasPrice,isError,txreceipt_status,input,contractAddress,cumulativeGasUsed,gasUsed,confirmations\n")  
+  return outFile
+
+
+# Create csv file for tokenName
+def closeCSVFile(outFile):
+  outFile.close()
+
+
+# Return input in csv format
+def appendToCSV(tokenName, holderAddress, transactions):
+  outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'a')
+  csvWriter = csv.writer(outFile)
+    
+  for transaction in transactions:
+    csvWriter.writerow(transaction.values())
 
 
 # Return tokens from json file
@@ -81,14 +109,15 @@ def getTokens(filepath):
     return json.load(f)
 
 
-# Save input to disk
-def saveToFile(input, filepath):
-  print ("stub: saveToFile")
-
-
 # Main program
 tokensAddress = getTokens(TOKENS_FILEPATH)
-for token in tokensAddress:
-  if DEBUG: print (">>> TOKEN:" + token)
-  getTokenHolders(tokensAddress[token])
-  if DEBUG: print ("")
+for tokenName in tokensAddress:
+  if DEBUG:
+      print (">>> TOKEN:" + tokenName)
+    
+  csvFile = createCSVFile(tokenName)
+  getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)
+  closeCSVFile(csvFile)
+  
+  if DEBUG:
+      print ("")
