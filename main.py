@@ -33,18 +33,22 @@ def getTokenHolders(token):
   }
   URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + token
   response = requests.get(URI, params=query, headers = headers)
-  # FIXME: change to return instead of printing
-  print (response.json())
-  print ("")
-  #getHolderTransactions()
+    
+  holders = response.json()["holders"]
+  for holder in holders:    
+    holderAddress = holder["address"]
+    print (">>> HOLDER: " + holderAddress)
+    getHolderTransactions(holderAddress)
+    print ("")
 
 
 # Return list of transactions
-def getHolderTransactions():
+def getHolderTransactions(holderAddress):
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "module" : "account",
     "action" : API_TRANSACTION_TYPE,
+    "address" : holderAddress,
     "startblock" : 0,
     "endblock" : 99999999,
     "page" : "1",
@@ -54,7 +58,7 @@ def getHolderTransactions():
   }
   URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
   response = requests.get(URI, params=query, headers = headers)
-  # FIXME: change to return instead of printing
+  print (">>> Transactions of holder: " + holderAddress)
   print (response.json())
 
 
@@ -77,5 +81,6 @@ def saveToFile(input, filepath):
 # Main program
 tokensAddress = getTokens(TOKENS_FILEPATH)
 for token in tokensAddress:
+  print (">>> TOKEN:" + token)
   getTokenHolders(tokensAddress[token])
-  
+  print ("")
