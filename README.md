@@ -16,11 +16,25 @@ Install python dependencies
 
 ## Setup environment
 
-  Replace api with your own production keys
+1. Set api keys with your own
 
-  1. Open ".env" file
-  2. Copy and past your keys for API_HOLDERS_KEY, API_TRANSACTIONS_KEY
-  3. Set ENV to "DEV" for testing and "PROD" for real use
+    In ".env" file, paste api keys for
+
+    `API_HOLDERS_KEY: from etherscan`
+
+    `API_TRANSACTIONS_KEY: from ethportal`
+
+2. Set type of transactions to fetch from holders
+
+    In ".env" file, paste
+
+    For Normal Transaction: `API_TRANSACTION_TYPE="txlist"`
+
+    For ERC20 - Token Transfer Events: `API_TRANSACTION_TYPE="tokentx"`
+
+3. Set tokens to fetch holders from
+
+    Paste token's key and it's address into `tokens.json`
 
 ---
 
