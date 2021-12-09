@@ -17,7 +17,7 @@ API_TRANSACTIONS_URI_DEV = os.environ.get("API_TRANSACTIONS_URI_DEV")
 API_TRANSACTIONS_RESOURCE = os.environ.get("API_TRANSACTIONS_RESOURCE")
 
 TOKEN_ADDRESS = {
-  "GM": "0xbc7250c8c3eca1dfc1728620af835fca489bfdf3#balances"
+  "GM": "0xbc7250c8c3eca1dfc1728620af835fca489bfdf3"
 }
 
 # Return list of holders
