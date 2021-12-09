@@ -1,9 +1,12 @@
 import requests
 import os
 from dotenv import load_dotenv
+import json
 
+TOKENS_FILEPATH = "./tokens.json"
+
+# Load dotevn properties
 load_dotenv()
-
 USER_AGENT = os.environ.get("USER_AGENT")
 
 if os.environ.get("ENV") == "PROD":
@@ -19,26 +22,24 @@ API_TRANSACTIONS_KEY = os.environ.get("API_TRANSACTIONS_KEY")
 API_TRANSACTIONS_RESOURCE = os.environ.get("API_TRANSACTIONS_RESOURCE")
 API_TRANSACTIONS_TYPE = os.environ.get("API_TRANSACTIONS_TYPE")
 
-# FIXME: load from json file
-TOKEN_ADDRESS = {
-  "GM": "0xbc7250c8c3eca1dfc1728620af835fca489bfdf3"
-}
 
 # Return list of holders
-def getHolders():
+def getTokenHolders(token):
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "apiKey" : API_HOLDERS_KEY,
     "limit" : 1000
   }
-  URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + TOKEN_ADDRESS["GM"]
+  URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + token
   response = requests.get(URI, params=query, headers = headers)
   # FIXME: change to return instead of printing
   print (response.json())
+  print ("")
+  #getHolderTransactions()
 
 
 # Return list of transactions
-def getTransactions():
+def getHolderTransactions():
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "module" : "account",
@@ -56,6 +57,15 @@ def getTransactions():
   # FIXME: change to return instead of printing
   print (response.json())
 
-getHolders()
-print ("")
-getTransactions()
+
+# Return tokens from json file
+def getTokens(filepath):
+  with open(filepath) as f:
+    return json.load(f)
+
+
+
+# Main program
+tokensAddress = getTokens(TOKENS_FILEPATH)
+for token in tokensAddress:
+  getTokenHolders(tokensAddress[token])
