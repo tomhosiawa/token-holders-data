@@ -24,7 +24,7 @@ TOKEN_ADDRESS = {
 def getHolders():
   headers = { 'User-Agent': USER_AGENT }
   query = {
-    "apiKey" : API_TRANSACTIONS_KEY
+    "apiKey" : API_HOLDERS_KEY
   }
   URI = API_HOLDERS_URI_DEV + API_HOLDERS_RESOURCE + TOKEN_ADDRESS["GM"]
   response = requests.get(URI, params=query, headers = headers)
