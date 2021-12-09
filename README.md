@@ -20,6 +20,7 @@ Install python dependencies
 
   1. Open ".env" file
   2. Copy and past your keys for API_HOLDERS_KEY, API_TRANSACTIONS_KEY
+  3. Set ENV to "DEV" for testing and "PROD" for real use
 
 ---
 

@@ -5,7 +5,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 USER_AGENT = os.environ.get("USER_AGENT")
+
+if os.environ.get("ENV") == "PROD":
+  API_HOLDERS_URI = os.environ.get("API_HOLDERS_URI_PROD")
+  API_TRANSACTIONS_URI = os.environ.get("API_TRANSACTIONS_URI_PROD")
+else:
+  API_HOLDERS_URI = os.environ.get("API_HOLDERS_URI_DEV")
+  API_TRANSACTIONS_URI = os.environ.get("API_TRANSACTIONS_URI_DEV")
+
 API_HOLDERS_KEY = os.environ.get("API_HOLDERS_KEY")
+API_HOLDERS_RESOURCE = os.environ.get("API_HOLDERS_RESOURCE")
 API_TRANSACTIONS_KEY = os.environ.get("API_TRANSACTIONS_KEY")
 
 API_HOLDERS_URI_PROD = os.environ.get("API_HOLDERS_URI_PROD")
@@ -26,7 +35,7 @@ def getHolders():
   query = {
     "apiKey" : API_HOLDERS_KEY
   }
-  URI = API_HOLDERS_URI_DEV + API_HOLDERS_RESOURCE + TOKEN_ADDRESS["GM"]
+  URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + TOKEN_ADDRESS["GM"]
   response = requests.get(URI, params=query, headers = headers)
   # FIXME: change to return instead of printing
   print (response)
@@ -46,7 +55,7 @@ def getTransactions():
     "sort" : "asc",
     "apikey" : API_TRANSACTIONS_KEY
   }
-  URI = API_TRANSACTIONS_URI_DEV + API_TRANSACTIONS_RESOURCE
+  URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
   response = requests.get(URI, params=query, headers = headers)
   # FIXME: change to return instead of printing
   print (response)
