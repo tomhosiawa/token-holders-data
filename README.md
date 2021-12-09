@@ -39,6 +39,11 @@ Install python dependencies
 
     Paste token's key and it's address into `tokens.json`
 
+5. (Optional) Turn on print output, set
+
+   In ".env" file, change
+   DEBUG = True
+
 ---
 
 ## Usage

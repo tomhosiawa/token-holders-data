@@ -7,6 +7,10 @@ TOKENS_FILEPATH = "./tokens.json"
 
 # Load dotevn properties
 load_dotenv()
+if os.environ.get("DEBUG").lower() == "true":
+  DEBUG = True
+else:
+  DEBUG = False
 USER_AGENT = os.environ.get("USER_AGENT")
 
 if os.environ.get("ENV") == "PROD":
@@ -37,6 +41,8 @@ def getTokenHolders(token):
   holders = response.json()["holders"]
   for holder in holders:    
     holderAddress = holder["address"]
+    
+    if DEBUG:
     print (">>> HOLDER: " + holderAddress)
     getHolderTransactions(holderAddress)
     print ("")
@@ -58,6 +64,8 @@ def getHolderTransactions(holderAddress):
   }
   URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
   response = requests.get(URI, params=query, headers = headers)
+  
+  if DEBUG:
   print (">>> Transactions of holder: " + holderAddress)
   print (response.json())
 
@@ -81,6 +89,6 @@ def saveToFile(input, filepath):
 # Main program
 tokensAddress = getTokens(TOKENS_FILEPATH)
 for token in tokensAddress:
-  print (">>> TOKEN:" + token)
+  if DEBUG: print (">>> TOKEN:" + token)
   getTokenHolders(tokensAddress[token])
-  print ("")
+  if DEBUG: print ("")
