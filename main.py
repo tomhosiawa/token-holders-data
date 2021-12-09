@@ -42,7 +42,7 @@ def getTransactions():
   query = {
     "module" : "account",
     "action" : "txlist",
-    "address" : "0xdccc15d1153a6ade7e6aed44d34679b82c7845ca", # FIXME: hard coding just to poc test
+    "address" : "0xdccc15d1153a6ade7e6aed44d34679b82c7845ca", # Holder's address FIXME: hard coding just to poc test
     "startblock" : 0,
     "endblock" : 99999999,
     "page" : "1",
