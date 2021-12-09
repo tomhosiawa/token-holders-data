@@ -1,0 +1,10 @@
+{
+  "name": "token-holders-data",
+  "version": "0.1.0",
+  "scripts": {
+    "prod": "python main.py",
+    "start": "python main.py"
+  },
+  "private": true,
+  "description": "Save holders transactions for top X holders of a coin to a file"
+}
