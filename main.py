@@ -21,7 +21,7 @@ API_HOLDERS_RESOURCE = os.environ.get("API_HOLDERS_RESOURCE")
 API_HOLDERS_TOP_HOLDERS_LIMIT = os.environ.get("API_HOLDERS_TOP_HOLDERS_LIMIT")
 API_TRANSACTIONS_KEY = os.environ.get("API_TRANSACTIONS_KEY")
 API_TRANSACTIONS_RESOURCE = os.environ.get("API_TRANSACTIONS_RESOURCE")
-API_TRANSACTIONS_TYPE = os.environ.get("API_TRANSACTIONS_TYPE")
+API_TRANSACTION_TYPE = os.environ.get("API_TRANSACTION_TYPE")
 
 
 # Return list of holders
@@ -44,8 +44,7 @@ def getHolderTransactions():
   headers = { 'User-Agent': USER_AGENT }
   query = {
     "module" : "account",
-    "action" : API_TRANSACTIONS_TYPE,
-    "address" : "0xdccc15d1153a6ade7e6aed44d34679b82c7845ca", # Holder's address FIXME: hard coding just to poc test
+    "action" : API_TRANSACTION_TYPE,
     "startblock" : 0,
     "endblock" : 99999999,
     "page" : "1",
