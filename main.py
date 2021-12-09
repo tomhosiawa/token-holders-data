@@ -29,7 +29,7 @@ def getHolders():
   URI = API_HOLDERS_URI_DEV + API_HOLDERS_RESOURCE + TOKEN_ADDRESS["GM"]
   response = requests.get(URI, params=query, headers = headers)
   # FIXME: change to return instead of printing
-  print (response.json)
+  print (response)
 
 
 # Return list of transactions
@@ -52,4 +52,4 @@ def getTransactions():
   print (response)
 
 getHolders()
-#getTransactions()
+getTransactions()
