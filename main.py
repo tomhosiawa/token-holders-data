@@ -85,12 +85,7 @@ def getHolderTransactions(holderAddress):
 # Create csv file for tokenName and return it
 def createCSVFile(tokenName):
   outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
-  outFile.write("blockNumber,timeStamp,hash,nonce,blockHash,transactionIndex,from,to,value,gas,gasPrice,isError,txreceipt_status,input,contractAddress,cumulativeGasUsed,gasUsed,confirmations,holderAddress\n")  
-  return outFile
-
-
-# Create csv file for tokenName
-def closeCSVFile(outFile):
+  outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,transactionIndex,from,to,value,gas,gasPrice,isError,txreceipt_status,input,contractAddress,cumulativeGasUsed,gasUsed,confirmations\n")  
   outFile.close()
 
 
@@ -100,8 +95,10 @@ def appendToCSV(tokenName, holderAddress, transactions):
   csvWriter = csv.writer(outFile)
     
   for transaction in transactions:
-    transaction["holderAddress"] = holderAddress    
-    csvWriter.writerow(transaction.values())
+    transaction = [holderAddress] + list(transaction.values())    
+    csvWriter.writerow(transaction)
+  
+  outFile.close()
 
 
 # Return tokens from json file
@@ -116,9 +113,8 @@ for tokenName in tokensAddress:
   if DEBUG:
       print (">>> TOKEN:" + tokenName)
     
-  csvFile = createCSVFile(tokenName)
-  getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)
-  closeCSVFile(csvFile)
+  createCSVFile(tokenName)
+  getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)  
   
   if DEBUG:
       print ("")
