@@ -4,6 +4,9 @@ node_modules
 # local env files
 .env
 
+# Misc
+.DS_Store
+
 # Output files
 output
 
