@@ -8,7 +8,7 @@ node_modules
 .DS_Store
 
 # Output files
-output
+output/*.csv
 
 # package logs
 yarn-debug.log*
