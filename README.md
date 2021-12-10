@@ -16,7 +16,9 @@ Install python dependencies
 
 ## Setup environment
 
-1. Set api keys with your own
+1. Create a ".env" file
+
+2. Set api keys with your own
 
     In ".env" file, paste api keys for
 
@@ -24,10 +26,10 @@ Install python dependencies
 
     `API_TRANSACTIONS_KEY: from ethportal`
 
-2. (Optional) Set limit for top holders to get data on
+3. (Optional) Set limit for top holders to get data on
     API_HOLDERS_TOP_HOLDERS_LIMIT = 1000 (default)
 
-3. Set type of transactions to fetch from holders
+4. Set type of transactions to fetch from holders
 
     In ".env" file, paste
 
@@ -35,14 +37,14 @@ Install python dependencies
 
     For ERC20 - Token Transfer Events: `API_TRANSACTION_TYPE="tokentx"`
 
-4. Set tokens to fetch holders from
+5. Set tokens to fetch holders from
 
     Paste token's key and it's address into `tokens.json`
 
-5. Set number of transactions per api call
+6. Set number of transactions per api call
    API_TRANSACTION_PAGE_SIZE = 10,000 (default) - 10,000 is max supported by etherscan
 
-6. (Optional) Turn on print output, set
+7. (Optional) Turn on print output, set
 
    In ".env" file, change
    DEBUG = True
