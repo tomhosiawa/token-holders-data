@@ -39,9 +39,9 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
     "limit" : API_HOLDERS_TOP_HOLDERS_LIMIT
   }
   URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + tokenAddress
-  response = requests.get(URI, params=query, headers = headers)
+  response = requests.get(URI, params=query, headers = headers).json()
     
-  holders = response.json()["holders"]
+  holders = response["holders"]  
   for holder in holders:    
     holderAddress = holder["address"]
     
@@ -73,21 +73,23 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
   }
   URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
     
-  status = True  
-  while status:
-    response = requests.get(URI, params=query, headers = headers).json()  
+  # FIXME: convert status to a bool, can't get it to work with bool(status)
+  status = "1"
+  while status == "1":
+    response = requests.get(URI, params=query, headers = headers).json()
     status = response["status"]    
-    transactions = response["result"]
-    cbAppendtoCSV(tokenName, holderAddress, transactions)
-    
-    page = page + 1
-    query[page] = page    
-  
-    if DEBUG:
-      print (">>> Transactions of holder: " + holderAddress)
-      print (">>> Page: " + str(page))
-      #print (transactions)
-    
+    if status == "1":
+      transactions = response["result"]
+      cbAppendtoCSV(tokenName, holderAddress, transactions)
+
+      if DEBUG:
+        print (">>> Transactions of holder: " + holderAddress)
+        print (">>> Page: " + str(page) + " Status: " + str(status))        
+        print (transactions[0])
+      
+      page = page + 1
+      query["page"] = page
+        
   return transactions
 
 
