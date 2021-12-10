@@ -96,7 +96,7 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
 # Create csv file for tokenName and return it
 def createCSVFile(tokenName):
   outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
-  outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,transactionIndex,from,to,value,gas,gasPrice,isError,txreceipt_status,input,contractAddress,cumulativeGasUsed,gasUsed,confirmations\n")  
+  outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,value,tokenName,tokenSymbol,tokenDecimal,transactionIndex,gas,gasPrice,gasUsed,cumulativeGasUsed,input,confirmations\n")  
   outFile.close()
 
 
@@ -106,7 +106,7 @@ def appendToCSV(tokenName, holderAddress, transactions):
   csvWriter = csv.writer(outFile)
     
   for transaction in transactions:
-    transaction = [holderAddress] + list(transaction.values())    
+    transaction = [holderAddress] + list(transaction.values())
     csvWriter.writerow(transaction)
   
   outFile.close()
