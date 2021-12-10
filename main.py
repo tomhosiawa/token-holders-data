@@ -48,8 +48,7 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
     if DEBUG:
       print (">>> HOLDER: " + holderAddress)
         
-    transactions = getHolderTransactions(holderAddress)
-    cbAppendtoCSV(tokenName, holderAddress, transactions)
+    getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV)    
     
     if DEBUG:
       print ("")
@@ -57,27 +56,37 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
 
 # Return list of transactions
 # TODO: check if needs to do error/performance checking based on tranactions list size
-def getHolderTransactions(holderAddress):
+def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
+  page = 1
+  
   headers = { 'User-Agent': USER_AGENT }
-  # FIXME: go over all pages
   query = {
     "module" : "account",
     "action" : API_TRANSACTION_TYPE,
     "address" : holderAddress,
     "startblock" : 0,
     "endblock" : 99999999,
-    "page" : "1",
+    "page" : page,
     "offset" : API_TRANSACTION_PAGE_SIZE,
     "sort" : "asc",
     "apikey" : API_TRANSACTIONS_KEY
   }
   URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
-  response = requests.get(URI, params=query, headers = headers)
-  transactions = response.json()["result"]
+    
+  status = True  
+  while status:
+    response = requests.get(URI, params=query, headers = headers).json()  
+    status = response["status"]    
+    transactions = response["result"]
+    cbAppendtoCSV(tokenName, holderAddress, transactions)
+    
+    page = page + 1
+    query[page] = page    
   
-  if DEBUG:
-    print (">>> Transactions of holder: " + holderAddress)
-    print (transactions)
+    if DEBUG:
+      print (">>> Transactions of holder: " + holderAddress)
+      print (">>> Page: " + str(page))
+      #print (transactions)
     
   return transactions
 
