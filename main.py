@@ -28,7 +28,7 @@ API_HOLDERS_TOP_HOLDERS_LIMIT = os.environ.get("API_HOLDERS_TOP_HOLDERS_LIMIT")
 API_TRANSACTIONS_KEY = os.environ.get("API_TRANSACTIONS_KEY")
 API_TRANSACTIONS_RESOURCE = os.environ.get("API_TRANSACTIONS_RESOURCE")
 API_TRANSACTION_TYPE = os.environ.get("API_TRANSACTION_TYPE")
-
+API_TRANSACTION_PAGE_SIZE = os.environ.get("API_TRANSACTION_PAGE_SIZE")
 
 # Return list of holders
 # cbAppendtoCSV: callback function to save transactions to csv file
@@ -67,7 +67,7 @@ def getHolderTransactions(holderAddress):
     "startblock" : 0,
     "endblock" : 99999999,
     "page" : "1",
-    "offset" : "1",
+    "offset" : API_TRANSACTION_PAGE_SIZE,
     "sort" : "asc",
     "apikey" : API_TRANSACTIONS_KEY
   }

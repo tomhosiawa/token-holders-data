@@ -39,7 +39,10 @@ Install python dependencies
 
     Paste token's key and it's address into `tokens.json`
 
-5. (Optional) Turn on print output, set
+5. Set number of transactions per api call
+   API_TRANSACTION_PAGE_SIZE = 10,000 (default) - 10,000 is max supported by etherscan
+
+6. (Optional) Turn on print output, set
 
    In ".env" file, change
    DEBUG = True
