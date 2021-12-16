@@ -85,9 +85,8 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
         response = requests.get(URI, params=query, headers = headers).json()
         status = response["status"]    
         if status == "1":
-            transactions = response["result"]
-            addTransactionsEthPrice(transactions)
-            addActionField(holderAddress, transactions)
+            transactions = response["result"]            
+            addDataFields(holderAddress, transactions)
             cbAppendtoCSV(tokenName, holderAddress, transactions)
 
             if DEBUG:
@@ -101,26 +100,21 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
     
     return transactions
 
-
-# Return transactions with added ether price added for each one
-def addTransactionsEthPrice(transactions):
+# Return transactions with action field: buy or sell
+def addDataFields(holderAddress, transactions):    
     for i, transaction in enumerate(transactions, start=0):
+        # Add ethPrice field
         blockNumber = transaction["blockNumber"]
         ethPrice = getEtherPrice(blockNumber)
-        transactions[i]["ethPrice"] = ethPrice
-
-    return transactions
-
-# Return transactions with action field: buy or sell
-def addActionField(holderAddress, transactions):
-    for i, transaction in enumerate(transactions, start=0):
-        print (transaction)
+        transaction["ethPrice"] = ethPrice
+        
+        # Add action field        
         if transaction["from"] == holderAddress:
-            transactions[i]["ethPrice"] = "Sell"
+            transactions[i]["action"] = "Sell"
         elif transaction["to"] == holderAddress:
-            transactions[i]["ethPrice"] = "Buy"
+            transactions[i]["action"] = "Buy"
         else:
-            transactions[i]["ethPrice"] = "error"
+            transactions[i]["action"] = "error"
 
     return transactions
 
