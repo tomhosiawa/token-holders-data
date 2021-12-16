@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import json
 import csv
 
+from Ether_Data_Scrape import getEtherPrice
+
 TOKENS_FILEPATH = "./tokens.json"
 
 # Load dotevn properties
@@ -80,6 +82,7 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
     status = response["status"]    
     if status == "1":
       transactions = response["result"]
+      addTransactionsEthPrice(transactions)
       cbAppendtoCSV(tokenName, holderAddress, transactions)
 
       if DEBUG:
@@ -93,10 +96,21 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
   return transactions
 
 
+# Return transactions with ether price for each one
+def addTransactionsEthPrice(transactions):
+  for i, transaction in enumerate(transactions, start=0):
+    blockNumber = transaction["blockNumber"]
+    ethPrice = getEtherPrice(blockNumber)
+    transactions[i]["ethPrice"] = ethPrice
+
+  return transactions
+
 # Create csv file for tokenName and return it
 def createCSVFile(tokenName):
   outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
-  outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,value,tokenName,tokenSymbol,tokenDecimal,transactionIndex,gas,gasPrice,gasUsed,cumulativeGasUsed,input,confirmations\n")  
+  outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,"\
+                "value,tokenName,tokenSymbol,tokenDecimal,transactionIndex,gas,gasPrice,gasUsed,"\
+                "cumulativeGasUsed,input,confirmations,ethPrice\n")
   outFile.close()
 
 
