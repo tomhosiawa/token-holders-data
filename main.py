@@ -119,13 +119,17 @@ def getTokens(filepath):
 
 
 # Main program
-tokensAddress = getTokens(TOKENS_FILEPATH)
-for tokenName in tokensAddress:
-  if DEBUG:
-      print (">>> TOKEN:" + tokenName)
+def main():
+  tokensAddress = getTokens(TOKENS_FILEPATH)
+  for tokenName in tokensAddress:
+    if DEBUG:
+        print (">>> TOKEN:" + tokenName)
+      
+    createCSVFile(tokenName)
+    getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)  
     
-  createCSVFile(tokenName)
-  getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)  
-  
-  if DEBUG:
-      print ("")
+    if DEBUG:
+        print ("")
+
+if __name__ == "__main__":
+    main()
