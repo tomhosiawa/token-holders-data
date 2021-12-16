@@ -2,8 +2,8 @@
   "name": "token-holders-data",
   "version": "0.1.0",
   "scripts": {
-    "prod": "ENV=PROD python main.py",
-    "start": "ENV=DEV python main.py"
+    "prod": "ENV=PROD python3 main.py",
+    "start": "ENV=DEV python3 main.py"
   },
   "private": true,
   "description": "Save holders transactions for top X holders of a coin to a file"
