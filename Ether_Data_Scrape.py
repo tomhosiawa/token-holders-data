@@ -21,7 +21,8 @@ def getEtherPrice(block_num):
 #get etherprice 
     xpath = '//*[@id="ContentPlaceHolder1_closingEtherPrice"]/div/div[2]'
     ethprice = driver.find_element(By.XPATH, xpath).text    
-    ethprice = ethprice[1:ethprice.find(" /")]    
+    ethprice = ethprice[1:ethprice.find(" /")]
+    ethprice = ethprice.replace(',', '')
     return ethprice
 
     driver.close()
