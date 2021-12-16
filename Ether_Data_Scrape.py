@@ -16,30 +16,26 @@ def getEtherData(hash):
     
 #Find search bar, paste hash and keystroke enter
     search = driver.find_element(By.ID, "txtSearchInput")   
-    search.send_keys('0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904')
+    search.send_keys(hash)
     search.send_keys(Keys.ENTER)
 
-#get ether value
+#get ether amount
     xpath = '/html/body/div[1]/main/div[3]/div[1]/div[2]/div[1]/div/div[9]/div[2]/span/span'
-    ethvalue = driver.find_element(By.XPATH, xpath)
-    ethvalue = ethvalue[1:ethvalue.find(" ")]
+    ethamount = driver.find_element(By.XPATH, xpath).text
+    ethamount = ethamount[1:ethamount.find(" ")] 
     
 #get ether price 
     xpath = '//*[@id="ContentPlaceHolder1_closingEtherPrice"]/div/div[2]'
     ethprice = driver.find_element(By.XPATH, xpath).text
     ethprice = ethprice[1:ethprice.find(" /")]
     ethprice = ethprice.replace(',', '')
-    
-# get eth amount
-    xpath = '/html/body/div[1]/main/div[3]/div[1]/div[2]/div[1]/div/div[8]/div[2]/span/span'
-    ethamount = driver.find_element(By.XPATH, xpath).text
-    
+  
     return [ethprice, ethamount]
 
     driver.close()
 
 def main():
-    ether_price = getEtherData(4047627)
+    ether_price = getEtherData(0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904)
     print(ether_price)
     #for this example, should print $226.33
 
