@@ -87,6 +87,7 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
         if status == "1":
             transactions = response["result"]
             addTransactionsEthPrice(transactions)
+            addActionField(holderAddress, transactions)
             cbAppendtoCSV(tokenName, holderAddress, transactions)
 
             if DEBUG:
@@ -101,7 +102,7 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
     return transactions
 
 
-# Return transactions with ether price for each one
+# Return transactions with added ether price added for each one
 def addTransactionsEthPrice(transactions):
     for i, transaction in enumerate(transactions, start=0):
         blockNumber = transaction["blockNumber"]
@@ -110,12 +111,26 @@ def addTransactionsEthPrice(transactions):
 
     return transactions
 
+# Return transactions with action field: buy or sell
+def addActionField(holderAddress, transactions):
+    for i, transaction in enumerate(transactions, start=0):
+        print (transaction)
+        if transaction["from"] == holderAddress:
+            transactions[i]["ethPrice"] = "Sell"
+        elif transaction["to"] == holderAddress:
+            transactions[i]["ethPrice"] = "Buy"
+        else:
+            transactions[i]["ethPrice"] = "error"
+
+    return transactions
+
+
 # Create csv file for tokenName and return it
 def createCSVFile(tokenName):
     outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
     outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,"\
                   "value,tokenName,tokenSymbol,tokenDecimal,transactionIndex,gas,gasPrice,gasUsed,"\
-                  "cumulativeGasUsed,input,confirmations,ethPrice\n")
+                  "cumulativeGasUsed,input,confirmations,ethPrice,action\n")
     outFile.close()
 
 
