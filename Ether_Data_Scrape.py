@@ -30,3 +30,6 @@ def main():
     ether_price = getEtherPrice(4047627)
     print(ether_price) 
     #for this example, should print $226.33 / ETH
+
+if __name__ == "__main__":
+    main()
