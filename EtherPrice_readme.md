@@ -1,2 +1,2 @@
-install selenium
-install chromedriver 
+brew install selenium
+brew install chromedriver
