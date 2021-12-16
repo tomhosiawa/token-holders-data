@@ -100,8 +100,9 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
     
     return transactions
 
+
 # Return transactions with action field: buy or sell
-def addDataFields(holderAddress, transactions):    
+def addDataFields(holderAddress, transactions):
     for i, transaction in enumerate(transactions, start=0):
         # Add ethPrice field
         blockNumber = transaction["blockNumber"]
@@ -116,7 +117,7 @@ def addDataFields(holderAddress, transactions):
         else:
             transactions[i]["action"] = "error"
 
-        # Add costBasis
+        # Add costBasis        
         transactions[i]["costBasis"] = float(ethPrice) * float(transaction["value"])
         
     return transactions
