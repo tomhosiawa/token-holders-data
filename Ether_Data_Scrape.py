@@ -20,16 +20,16 @@ def getEtherPrice(block_num):
 
 #get etherprice 
     xpath = '//*[@id="ContentPlaceHolder1_closingEtherPrice"]/div/div[2]'
-    ethprice = driver.find_element(By.XPATH, xpath)
-
-    return ethprice.text 
+    ethprice = driver.find_element(By.XPATH, xpath).text    
+    ethprice = ethprice[1:ethprice.find(" /")]    
+    return ethprice
 
     driver.close()
 
 def main():
     ether_price = getEtherPrice(4047627)
-    print(ether_price) 
-    #for this example, should print $226.33 / ETH
+    print(ether_price)
+    #for this example, should print $226.33
 
 if __name__ == "__main__":
     main()
