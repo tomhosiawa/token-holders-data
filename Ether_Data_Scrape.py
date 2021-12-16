@@ -3,8 +3,9 @@ from selenium.webdriver.common.keys import Keys #keystrokes
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
-#takes in HolderAddress as paramater and returns ether price, ether value
-def getEtherData(block_num):
+#takes in hash as paramater and returns ether price, ether value
+
+def getEtherData(hash):
 
 #designate browser, create an instance of chromedriver
     driver = webdriver.Chrome() 
@@ -13,19 +14,16 @@ def getEtherData(block_num):
     url = "https://etherscan.io/"
     driver.get(url)
     
-#Find search bar, paste transaction ID and keystroke enter
+#Find search bar, paste hash and keystroke enter
     search = driver.find_element(By.ID, "txtSearchInput")   
-    search.send_keys('0x49107a0662d96081896620cef66e6cce880368e92127763814ca6007061698b5')
+    search.send_keys('0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904')
     search.send_keys(Keys.ENTER)
 
-#click first transaction
-    xpath = '/html/body/div[1]/main/div[4]/div[3]/div[2]/div/div[1]/div[2]/table/tbody/tr[1]/td[2]/a'
-    driver.find_element(By.XPATH, xpath).click()
-
 #get ether value
-    xpath = '/html/body/div[1]/main/div[3]/div[1]/div[2]/div[1]/div/div[7]/div[2]/span/span'
+    xpath = '/html/body/div[1]/main/div[3]/div[1]/div[2]/div[1]/div/div[9]/div[2]/span/span'
     ethvalue = driver.find_element(By.XPATH, xpath)
-
+    ethvalue = ethvalue[1:ethvalue.find(" ")]
+    
 #get ether price 
     xpath = '//*[@id="ContentPlaceHolder1_closingEtherPrice"]/div/div[2]'
     ethprice = driver.find_element(By.XPATH, xpath).text
