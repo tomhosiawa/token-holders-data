@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import json
 import csv
 
-from Ether_Data_Scrape import getEtherPrice
+from Ether_Data_Scrape import getEtherData
 
 TOKENS_FILEPATH = "./tokens.json"
 
@@ -62,7 +62,7 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
 
 # Return list of transactions
 # TODO: check if needs to do error/performance checking based on tranactions list size
-def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
+def getHolderTransactions(tokenSymbol, holderAddress, cbAppendtoCSV):
     page = 1
     
     headers = { 'User-Agent': USER_AGENT }
@@ -85,14 +85,15 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
         response = requests.get(URI, params=query, headers = headers).json()
         status = response["status"]    
         if status == "1":
-            transactions = response["result"]            
-            addDataFields(holderAddress, transactions)
-            cbAppendtoCSV(tokenName, holderAddress, transactions)
+            transactions = response["result"]
+            transactions = getAugmentedTransactions(tokenSymbol, holderAddress, transactions)
+            cbAppendtoCSV(tokenSymbol, holderAddress, transactions)
 
             if DEBUG:
                 print (">>> Transactions of holder: " + holderAddress)
-                print (">>> Page: " + str(page) + " Status: " + str(status))        
-                print (transactions[0])
+                print (">>> Page: " + str(page) + " Status: " + str(status))
+                if transactions:
+                  print (transactions[0])
                 break
             
             page = page + 1
@@ -102,25 +103,33 @@ def getHolderTransactions(tokenName, holderAddress, cbAppendtoCSV):
 
 
 # Return transactions with action field: buy or sell
-def addDataFields(holderAddress, transactions):
+def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
+    newTransactions = []
+    
     for i, transaction in enumerate(transactions, start=0):
+        # Omit transaction        
+        if transaction["tokenSymbol"] == tokenSymbol:
+          newTransactions.append(transactions[i])
+        else:
+            continue
+        
         # Add ethPrice field
         blockNumber = transaction["blockNumber"]
-        ethPrice = getEtherPrice(blockNumber)
-        transaction["ethPrice"] = ethPrice
+        ethPrice, ethAmount = getEtherData(blockNumber)
+        newTransactions[i]["ethPrice"] = ethPrice
         
         # Add action field
         if transaction["from"] == holderAddress:
-            transactions[i]["action"] = "Sell"
+            newTransactions[i]["action"] = "Sell"
         elif transaction["to"] == holderAddress:
-            transactions[i]["action"] = "Buy"
+            newTransactions[i]["action"] = "Buy"
         else:
-            transactions[i]["action"] = "error"
+            newTransactions[i]["action"] = "error"
 
         # Add costBasis        
-        transactions[i]["costBasis"] = float(ethPrice) * float(transaction["value"])
+        transactions[i]["costBasis"] = float(ethPrice) * float(ethAmount)
         
-    return transactions
+    return newTransactions
 
 
 # Create csv file for tokenName and return it
