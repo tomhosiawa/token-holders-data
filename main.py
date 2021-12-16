@@ -108,7 +108,7 @@ def addDataFields(holderAddress, transactions):
         ethPrice = getEtherPrice(blockNumber)
         transaction["ethPrice"] = ethPrice
         
-        # Add action field        
+        # Add action field
         if transaction["from"] == holderAddress:
             transactions[i]["action"] = "Sell"
         elif transaction["to"] == holderAddress:
@@ -116,6 +116,9 @@ def addDataFields(holderAddress, transactions):
         else:
             transactions[i]["action"] = "error"
 
+        # Add costBasis
+        transactions[i]["costBasis"] = float(ethPrice) * float(transaction["value"])
+        
     return transactions
 
 
@@ -124,7 +127,7 @@ def createCSVFile(tokenName):
     outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
     outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,"\
                   "value,tokenName,tokenSymbol,tokenDecimal,transactionIndex,gas,gasPrice,gasUsed,"\
-                  "cumulativeGasUsed,input,confirmations,ethPrice,action\n")
+                  "cumulativeGasUsed,input,confirmations,ethPrice,action,costBasis\n")
     outFile.close()
 
 
