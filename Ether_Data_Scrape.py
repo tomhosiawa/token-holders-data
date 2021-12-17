@@ -29,10 +29,10 @@ def getEtherData(hash):
     ethprice = driver.find_element(By.XPATH, xpath).text
     ethprice = ethprice[1:ethprice.find(" /")]
     ethprice = ethprice.replace(',', '')
-  
-    return [ethprice, ethamount]
 
     driver.close()
+    return [ethprice, ethamount]
+
 
 def main():
     ether_price = getEtherData(0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904)
