@@ -114,8 +114,8 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
             continue
         
         # Add ethPrice field
-        blockNumber = transaction["blockNumber"]
-        ethPrice, ethAmount = getEtherData(blockNumber)
+        hash = transaction["hash"]
+        ethPrice, ethAmount = getEtherData(hash)
         newTransactions[i]["ethPrice"] = ethPrice
         
         # Add action field
