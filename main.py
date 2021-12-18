@@ -114,8 +114,8 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
             continue
         
         # Add ethPrice field
-        blockNumber = transaction["blockNumber"]
-        ethPrice, ethAmount = getEtherData(blockNumber)
+        hash = transaction["hash"]
+        ethPrice, ethAmount = getEtherData(hash)
         newTransactions[i]["ethPrice"] = ethPrice
         
         # Add action field
@@ -132,7 +132,7 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
     return newTransactions
 
 
-# Create csv file for tokenName and return it
+# Create csv file dataset for tokenName and return it
 def createCSVFile(tokenName):
     outFile = open(OUTPUT_DIR_PATH + tokenName + ".csv", 'w')
     outFile.write("holderAddress,blockNumber,timeStamp,hash,nonce,blockHash,from,contractAddress,to,"\
@@ -161,12 +161,19 @@ def getTokens(filepath):
 
 # Main program
 def main():
+    #Store token address from filepath in "tokensAddress"
+    #tokensAddress is a json object, containing key/value pairs
     tokensAddress = getTokens(TOKENS_FILEPATH)
+    
+    #Iterate through token addresses 
     for tokenName in tokensAddress:
         if DEBUG:
             print (">>> TOKEN:" + tokenName)
-        
+            
+        #Create csv dataset for tokenName
         createCSVFile(tokenName)
+        
+        #Return list of holders for tokenName
         getTokenHolders(tokenName, tokensAddress[tokenName], appendToCSV)  
         
         if DEBUG:
