@@ -35,9 +35,8 @@ def getEtherData(hash):
 
 
 def main():
-    ether_price = getEtherData(0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904)
+    ether_price = getEtherData('0x48ff3dfdec7106041566ea34fb0c0bf6481ccbc9b450b1b139f99920dbc94904')
     print(ether_price)
-    #for this example, should print $226.33
 
 if __name__ == "__main__":
     main()
