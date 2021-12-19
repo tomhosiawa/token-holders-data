@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import json
 import csv
 
-from Ether_Data_Scrape import getEtherData
+from query import getEthDataAtBlock
 
 TOKENS_FILEPATH = "./tokens.json"
 
@@ -114,8 +114,8 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
             continue
         
         # Add ethPrice field
-        hash = transaction["hash"]
-        ethPrice, ethAmount = getEtherData(hash)
+        blockNumber = transaction["blockNumber"]
+        ethPrice, ethAmount = getEthDataAtBlock(blockNumber)
         newTransactions[i]["ethPrice"] = ethPrice
         
         # Add action field

@@ -22,7 +22,11 @@ def getEthPrice(query_result):
 
     return ethPrice
 
-def getEthPriceAtBlock(block):
+def getEthAmount(query_result):
+    # todo
+    return 0
+
+def getEthDataAtBlock(block):
     
     query = f"""
     {{
@@ -53,27 +57,22 @@ def getEthPriceAtBlock(block):
     """
 
     result = runQuery(query)
-    return getEthPrice(result)
+    return [getEthPrice(result), getEthAmount(result)]
 
+# Main program
+def main():
+    currentBlock = 13677712
 
-currentBlock = 13677712
+    f = open("./output/ethPrices.txt", "a")
 
-f = open("./output/ethPrices.txt", "a")
+    for n in range(52560):
+        block = currentBlock - (n * 50)
+        
+        [ethPrice, ethAmount] = getEthDataAtBlock(block)
+        print(f"Block: {block}, Ether Price: {ethPrice}, Ether Amount: {ethAmount}")
+        f.write(f"Block: {block}, Ether Price: {ethPrice}, Ether Amount: {ethAmount}\n")
 
-for n in range(52560):
-    block = currentBlock - (n * 50)
-    
-    ethPrice = getEthPriceAtBlock(block)
-    print(f"Block: {block}, Ether Price: {ethPrice}")
-    f.write(f"Block: {block}, Ether Price: {ethPrice}\n")
+    f.close()
 
-f.close()
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    main()
