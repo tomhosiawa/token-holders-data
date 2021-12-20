@@ -6,7 +6,12 @@ def runQuery(query):
     request = requests.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',json={'query': query})
     
     if request.status_code == 200:
-        return request.json()['data']
+        try:
+            return request.json()['data']
+        except:
+            sleep(2)
+            runQuery(query)
+
     else:
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
 
@@ -14,9 +19,12 @@ def getEthPrice(query_result):
     swap = query_result['swaps'][0]
     token0 = swap["pair"]["token0"]["symbol"]
     ethPrice = 0
-    
+
     if swap['amount0In'] != '0':
-        ethPrice = float(swap['amount0In']) /  float(swap['amount1Out'])
+        if swap['amount1Out'] != '0':
+            ethPrice = float(swap['amount0In']) /  float(swap['amount1Out'])
+        else:
+            ethPrice = float(swap['amount0In']) /  float(swap['amount0Out'])
     else:
         ethPrice = float(swap['amount0Out']) /  float(swap['amount1In'])
 
@@ -56,7 +64,7 @@ def getEthPriceAtBlock(block):
     return getEthPrice(result)
 
 
-currentBlock = 13677712
+currentBlock = 11983812
 
 f = open("./output/ethPrices.txt", "a")
 

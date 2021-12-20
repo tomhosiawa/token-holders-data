@@ -9,6 +9,7 @@ node_modules
 
 # Output files
 output/*.csv
+output/*.txt
 
 # Python byte-compiled / optimized / DLL files
 __pycache__/
