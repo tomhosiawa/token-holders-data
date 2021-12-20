@@ -1,3 +1,4 @@
+#Uniswap and Sushiwap requires separate query definitions.
 import requests
 
 
