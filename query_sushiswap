@@ -1,3 +1,4 @@
+#Uniswap and Sushiwap requires separate query definitions.
 import requests
 
 # Function to use requests.post to make an API call to the subgraph url
