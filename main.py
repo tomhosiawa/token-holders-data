@@ -48,7 +48,7 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
     URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + tokenAddress
     response = requests.get(URI, params=query, headers = headers).json()
     
-    holders = response["holders"][12:13]  
+    holders = response["holders"] 
     for holder in holders:    
         holderAddress = holder["address"]
         

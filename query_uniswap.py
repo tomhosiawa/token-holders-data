@@ -92,7 +92,6 @@ def getEthAmountFromTx(txId):
       }}
     }}
     """
-    print(query)
     result = runQuery(query)["swaps"]
 
     #to handle liquidity removal/add or other non swap functions
@@ -117,7 +116,7 @@ def getEthAmountFromTx(txId):
 def main():
     currentBlock = 13677712
 
-    f = open("./output/ethPrices.txt", "a")
+    f = open("./output/ethPrices.txt", "r")
 
     for n in range(52560):
         block = currentBlock - (n * 50)
