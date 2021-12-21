@@ -5,7 +5,6 @@ import math
 import time
 import sys
 
-
 def runQuery(query):
 
     request = requests.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',json={'query': query})
@@ -14,6 +13,7 @@ def runQuery(query):
         try:
             return request.json()['data']
         except:
+            print("error")
             time.sleep(2)
             runQuery(query)
 
@@ -21,6 +21,29 @@ def runQuery(query):
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
 
 
+#get top 5000 pairs in uni v2 for whitelist
+def getTopPairs():
+    pairs = {}
+    for n in range(5):
+        print(n * 1000)
+        query = f"""
+                {{
+             pairs(first: 1000, orderBy: reserveUSD, orderDirection: desc, skip: {n * 1000}) {{
+               id
+             }}
+            }}
+        """
+
+        result = runQuery(query)["pairs"]
+
+        for pair in result:
+            pairs[pair['id']] = "uniswap_v2"
+
+
+    with open('output/wl_univ2_contracts.json', 'w', encoding='utf-8') as f:
+        json.dump(pairs, f, ensure_ascii=False, indent=4)
+
+    
 def roundBlock(block):
     return math.floor(int(block) / 50) * 50 + 12
 
@@ -161,7 +184,12 @@ def updatePriceData(currentBlock="default"):
 # Main program
 def main():
     if sys.argv[1] == "updatePrice":
-        updatePriceData()
+        updatePriceData(argv[2])
+
+    if sys.argv[1] == "getPairs":
+        getTopPairs()
+
+
 
 if __name__ == "__main__":
     main()

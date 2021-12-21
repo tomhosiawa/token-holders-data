@@ -113,7 +113,8 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
     #currently has GM and MONGOOSE hardcoded in
     # todo, add an expanded whitelist in separate file
     
-    whitelistedContracts = ['0x7a250d5630b4cf539739df2c5dacb4c659f2488d', '0x450e653a0a125a1dc36d3901d3cce2e2287df0c2', '0x98d677887af8a699be38ef6276f4cd84aca29d74']
+    with open('output/wl_univ2_contracts.json') as f:
+        whitelistedContracts = json.load(f)
 
 
 
