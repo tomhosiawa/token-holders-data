@@ -1,5 +1,9 @@
 #Uniswap and Sushiwap requires separate query definitions.
 import requests
+import json
+import math
+import time
+import sys
 
 
 def runQuery(query):
@@ -10,13 +14,15 @@ def runQuery(query):
         try:
             return request.json()['data']
         except:
-            sleep(2)
+            time.sleep(2)
             runQuery(query)
 
     else:
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
 
 
+def roundBlock(block):
+    return math.floor(int(block) / 50) * 50 + 12
 
 def getEthPrice(query_result):
     swap = query_result['swaps'][0]
@@ -35,6 +41,7 @@ def getEthPrice(query_result):
 
 
 #searches latest ETH/DAI tx since block number and uses the tx to calculate eth price
+#todo add error handling for invalid block arg
 def getEthPriceAtBlock(block):
     query = f"""
     {{
@@ -66,6 +73,13 @@ def getEthPriceAtBlock(block):
 
     result = runQuery(query)
     return getEthPrice(result)
+
+def loadLocalEthPrice(block):
+    with open('output/ethPrices.json') as f:
+        ethPrices = json.load(f)
+    
+    return ethPrices[str(roundBlock(block))]
+
 
 #returns amount transacted in ETH given a txID
 def getEthAmountFromTx(txId):
@@ -107,25 +121,47 @@ def getEthAmountFromTx(txId):
     if result['pair']['token0']['symbol'] == 'ETH' or result['pair']['token0']['symbol'] == 'WETH':
         return max(float(result['amount0In']), float(result['amount0Out']))
     else:
-        return max(float(result['amount1In']), float(result['amount1Out']))        
+        return max(float(result['amount1In']), float(result['amount1Out']))  
 
+#script to update json file with new eth prices
+def updatePriceData(currentBlock="default"):
+
+    #load currently available eth prices
+    ethPrices = {}
+    with open('output/ethPrices.json') as f:
+        ethPrices = json.load(f)
+
+    #retrieve latest block number
+    if currentBlock == "default":
+        currentBlock = requests.get("https://api.blockcypher.com/v1/eth/main").json()["height"]
+        currentBlock = roundBlock(currentBlock)
+
+    print(f"Current Block: {currentBlock}")
+    
+    newBlock = True
+
+
+    #add new price info to json file
+    while newBlock:
+        
+        if str(currentBlock) in ethPrices:
+            newBlock = False
+        else:
+            ethPrices[str(currentBlock)] = getEthPriceAtBlock(currentBlock)
+            print(currentBlock)
+            print(ethPrices[str(currentBlock)])
+
+            currentBlock -= 50
+
+    with open('output/ethPrices.json', 'w', encoding='utf-8') as f:
+        json.dump(ethPrices, f, ensure_ascii=False, indent=4)
 
 
 
 # Main program
 def main():
-    currentBlock = 13677712
-
-    f = open("./output/ethPrices.txt", "r")
-
-    for n in range(52560):
-        block = currentBlock - (n * 50)
-        
-        [ethPrice, ethAmount] = getEthDataAtBlock(block)
-        print(f"Block: {block}, Ether Price: {ethPrice}, Ether Amount: {ethAmount}")
-        f.write(f"Block: {block}, Ether Price: {ethPrice}, Ether Amount: {ethAmount}\n")
-
-    f.close()
+    if sys.argv[1] == "updatePrice":
+        updatePriceData()
 
 if __name__ == "__main__":
     main()

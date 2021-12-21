@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import json
 import csv
 
-from query_uniswap import getEthPriceAtBlock
+from query_uniswap import loadLocalEthPrice
 from query_uniswap import getEthAmountFromTx
 
 TOKENS_FILEPATH = "./tokens.json"
@@ -138,7 +138,7 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
         blockNumber = transaction["blockNumber"]
         txId = transaction["hash"]
 
-        ethPrice = getEthPriceAtBlock(blockNumber)
+        ethPrice = loadLocalEthPrice(blockNumber)
         ethAmount = getEthAmountFromTx(txId)
 
 
