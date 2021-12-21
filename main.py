@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 import json
 import csv
 
-from Ether_Data_Scrape import getEtherData
+from query_uniswap import getEthPriceAtBlock
+from query_uniswap import getEthAmountFromTx
 
 TOKENS_FILEPATH = "./tokens.json"
 
@@ -47,7 +48,7 @@ def getTokenHolders(tokenName, tokenAddress, cbAppendtoCSV):
     URI = API_HOLDERS_URI + API_HOLDERS_RESOURCE + tokenAddress
     response = requests.get(URI, params=query, headers = headers).json()
     
-    holders = response["holders"]  
+    holders = response["holders"][12:13]  
     for holder in holders:    
         holderAddress = holder["address"]
         
@@ -74,7 +75,7 @@ def getHolderTransactions(tokenSymbol, holderAddress, cbAppendtoCSV):
         "endblock" : 99999999,
         "page" : page,
         "offset" : API_TRANSACTION_PAGE_SIZE,
-        "sort" : "asc",
+        "sort" : "desc",
         "apikey" : API_TRANSACTIONS_KEY
     }
     URI = API_TRANSACTIONS_URI + API_TRANSACTIONS_RESOURCE
@@ -86,6 +87,7 @@ def getHolderTransactions(tokenSymbol, holderAddress, cbAppendtoCSV):
         status = response["status"]    
         if status == "1":
             transactions = response["result"]
+            print(holderAddress)
             transactions = getAugmentedTransactions(tokenSymbol, holderAddress, transactions)
             cbAppendtoCSV(tokenSymbol, holderAddress, transactions)
 
@@ -105,29 +107,53 @@ def getHolderTransactions(tokenSymbol, holderAddress, cbAppendtoCSV):
 # Return transactions with action field: buy or sell
 def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
     newTransactions = []
+    newTransactionsCount = 0
+
+    #whitelist Uni v2, Uni v3, Sushi
+    #currently has GM and MONGOOSE hardcoded in
+    # todo, add an expanded whitelist in separate file
     
+    whitelistedContracts = ['0x7a250d5630b4cf539739df2c5dacb4c659f2488d', '0x450e653a0a125a1dc36d3901d3cce2e2287df0c2', '0x98d677887af8a699be38ef6276f4cd84aca29d74']
+
+
+
     for i, transaction in enumerate(transactions, start=0):
-        # Omit transaction        
-        if transaction["tokenSymbol"] == tokenSymbol:
+        # Omit transaction if not correct token
+        # Omit if older than 300 days
+        # Omit if not interacting with whitelisted contract
+
+        #set contract equal to whatever isn't the holder addresss
+        contract = transaction['to'] if transaction['to'] != holderAddress else transaction['from'] 
+
+        if transaction["tokenSymbol"] == tokenSymbol and int(transaction["blockNumber"]) > 11922562 and contract in whitelistedContracts:
+          
+          #only increment transactionCount on valid transaction
           newTransactions.append(transactions[i])
+          newTransactionsCount += 1
+
         else:
             continue
         
         # Add ethPrice field
-        hash = transaction["hash"]
-        ethPrice, ethAmount = getEtherData(hash)
-        newTransactions[i]["ethPrice"] = ethPrice
+        blockNumber = transaction["blockNumber"]
+        txId = transaction["hash"]
+
+        ethPrice = getEthPriceAtBlock(blockNumber)
+        ethAmount = getEthAmountFromTx(txId)
+
+
+        newTransactions[newTransactionsCount - 1]["ethPrice"] = ethPrice
         
         # Add action field
         if transaction["from"] == holderAddress:
-            newTransactions[i]["action"] = "Sell"
+            newTransactions[newTransactionsCount - 1]["action"] = "Sell"
         elif transaction["to"] == holderAddress:
-            newTransactions[i]["action"] = "Buy"
+            newTransactions[newTransactionsCount - 1]["action"] = "Buy"
         else:
-            newTransactions[i]["action"] = "error"
+            newTransactions[newTransactionsCount - 1]["action"] = "error"
 
         # Add costBasis        
-        transactions[i]["costBasis"] = float(ethPrice) * float(ethAmount)
+        transactions[newTransactionsCount - 1]["costBasis"] = float(ethPrice) * float(ethAmount)
         
     return newTransactions
 
