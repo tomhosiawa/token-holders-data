@@ -1,7 +1,5 @@
 #Uniswap and Sushiwap requires separate query definitions.
 import requests
-
-# Function to use requests.post to make an API call to the subgraph url
 def runQuery(query):
 
     # Query request with sushiswap endpoint
@@ -14,8 +12,33 @@ def runQuery(query):
     else:
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
 
+#get top 5000 pairs in sushi for whitelist 
+def getTopPairs():
+    
+    pairs = {}
+    for n in range(5):
+        print(n * 1000)
+        
+        #query definition identical to uni v2
+        query = f"""
+                {{
+             pairs(first: 1000, 
+             orderBy: reserveUSD, 
+             orderDirection: desc, 
+             skip: {n * 1000}) {{
+               id
+             }}
+            }}
+        """
+   
+        result = runQuery(query)["pairs"]
 
+        for pair in result:
+            pairs[pair['id']] = "sushiswap"
 
+    with open('output/wl_univ2_contracts.json', 'w', encoding='utf-8') as f:
+        json.dump(pairs, f, ensure_ascii=False, indent=4)
+        
 def getEthAmountFromTx(txId):
     #todo
 
