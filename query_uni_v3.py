@@ -7,7 +7,7 @@ import sys
 def runQuery(query):
 
     univ3_endpoint = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3'
-    request = requests.post(univ3_endpoint,json={'query': query})
+    request = requests.post(univ3_endpoint, json={'query': query})
     
     if request.status_code == 200:
         try:
@@ -21,32 +21,33 @@ def runQuery(query):
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
 
 
-#get top 5000 pairs in uni v3 for whitelist
-def getTopPairs():
-    pairs = {}
+#get top 5000 pools in uni v3 for whitelist
+def getTopPools():
+    pools = {}
     for n in range(5):
         print(n * 1000)
         query = f"""
                 {{
-             pairs(first: 1000, orderBy: reserveUSD, orderDirection: desc, skip: {n * 1000}) {{
+             pools(first: 1000, orderBy: volumeUSD, orderDirection: desc, skip: {n * 1000}) {{
                id
              }}
             }}
         """
 
-        result = runQuery(query)["pairs"]
+        result = runQuery(query)["pools"]
 
-        for pair in result:
-            pairs[pair['id']] = "uniswap_v3"
+        for pool in result:
+            pools[pool['id']] = "uniswap_v3"
 
 
     with open('output/wl_univ3_contracts.json', 'w', encoding='utf-8') as f:
-        json.dump(pairs, f, ensure_ascii=False, indent=4)
+        json.dump(pools, f, ensure_ascii=False, indent=4)
 
     
 def roundBlock(block):
     return math.floor(int(block) / 50) * 50 + 12
 
+#fix to pools
 def getEthPrice(query_result):
     swap = query_result['swaps'][0]
     token0 = swap["pair"]["token0"]["symbol"]
@@ -105,18 +106,18 @@ def loadLocalEthPrice(block):
 
 
 #returns amount transacted in ETH given a txID
+
 def getEthAmountFromTx(txId):
+# amount0: BigDecimal! --> delta of token0 swapped
     query = f"""
         query swaps {{
       swaps(where:{{transaction:"{txId}"}}) {{
         id
         timestamp
-        amount0In
-        amount1In
-        amount0Out
-        amount1Out
+        amount0
+        amount1
         amountUSD
-        pair {{
+        pool {{
           token0 {{
             id
             symbol
@@ -141,7 +142,7 @@ def getEthAmountFromTx(txId):
 
     
     #if token0 is eth or eth equivalent, return whatever amount of token 0 was transacted
-    if result['pair']['token0']['symbol'] == 'ETH' or result['pair']['token0']['symbol'] == 'WETH':
+    if result['pool']['token0']['symbol'] == 'ETH' or result['pool']['token0']['symbol'] == 'WETH':
         return max(float(result['amount0In']), float(result['amount0Out']))
     else:
         return max(float(result['amount1In']), float(result['amount1Out']))  
@@ -186,8 +187,8 @@ def main():
     if sys.argv[1] == "updatePrice":
         updatePriceData(argv[2])
 
-    if sys.argv[1] == "getPairs":
-        getTopPairs()
+    if sys.argv[1] == "getPools":
+        getTopPools()
 
 
 
