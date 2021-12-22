@@ -1,5 +1,10 @@
 #Uniswap and Sushiwap requires separate query definitions.
 import requests
+import json
+import math
+import time
+import sys
+
 def runQuery(query):
 
     # Query request with sushiswap endpoint
@@ -7,11 +12,17 @@ def runQuery(query):
     request = requests.post(sushi_endpoint,json={'query': query})
     
     # 200 means your request was successful and the server responded with the data you were requesting
-    if request.status_code == 200:
-        return request.json()['data']
+     if request.status_code == 200:
+        try:
+            return request.json()['data']
+        except:
+            print("error")
+            time.sleep(2)
+            runQuery(query)
+
     else:
         raise Exception('Query failed. return code is {}.      {}'.format(request.status_code, query))
-
+        
 #get top 5000 pairs in sushi for whitelist 
 def getTopPairs():
     
@@ -36,7 +47,7 @@ def getTopPairs():
         for pair in result:
             pairs[pair['id']] = "sushiswap"
 
-    with open('output/wl_univ2_contracts.json', 'w', encoding='utf-8') as f:
+    with open('output/wl_sushiswap_contracts.json', 'w', encoding='utf-8') as f:
         json.dump(pairs, f, ensure_ascii=False, indent=4)
         
 def getEthAmountFromTx(txId):
