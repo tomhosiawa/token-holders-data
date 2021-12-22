@@ -6,7 +6,7 @@ import sys
 
 def runQuery(query):
 
-    univ3_endpoint = 'https://gateway.thegraph.com/api/[api-key]/subgraphs/id/0x9bde7bf4d5b13ef94373ced7c8ee0be59735a298-2'
+    univ3_endpoint = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3'
     request = requests.post(univ3_endpoint,json={'query': query})
     
     if request.status_code == 200:
