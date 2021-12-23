@@ -103,7 +103,16 @@ def getHolderTransactions(tokenSymbol, holderAddress, cbAppendtoCSV):
     
     return transactions
 
+def merge_JsonFiles(filename):
+    result = list()
+    for f1 in filename:
+        with open(f1, 'r') as infile:
+            result.extend(json.load(infile))
 
+    with open('whitelistedContracts.json', 'w') as output_file:
+        json.dump(result, output_file)
+        
+# getAugmentedTransactions() update the whitelistedContracts variable to contain all 3
 # Return transactions with action field: buy or sell
 def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
     newTransactions = []
@@ -112,12 +121,11 @@ def getAugmentedTransactions(tokenSymbol, holderAddress, transactions):
     #whitelist Uni v2, Uni v3, Sushi
     #currently has GM and MONGOOSE hardcoded in
     # todo, add an expanded whitelist in separate file
+    files = ['output/wl_univ2_contracts.json',
+             'output/wl_univ3_contracts.json',
+             'output/wl_sushiswap_contracts.json']
+    merge_JsonFiles(files)
     
-    with open('output/wl_univ2_contracts.json') as f:
-        whitelistedContracts = json.load(f)
-
-
-
     for i, transaction in enumerate(transactions, start=0):
         # Omit transaction if not correct token
         # Omit if older than 300 days
