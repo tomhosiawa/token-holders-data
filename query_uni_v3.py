@@ -47,7 +47,10 @@ def getTopPools():
 def roundBlock(block):
     return math.floor(int(block) / 50) * 50 + 12
 
-#fix to pools
+#Gets data for the eth price json file. 
+#This function was copied from univ2 and is not compatible with the univ3 query results.
+#Refer to pre-existing ethprice json file from univ2. 
+
 def getEthPrice(query_result):
     swap = query_result['swaps'][0]
     token0 = swap["pair"]["token0"]["symbol"]
@@ -63,7 +66,8 @@ def getEthPrice(query_result):
 
     return ethPrice
 
-
+#This function was copied from univ2 and is not compatible with the univ3 query results.
+#Refer to pre-existing json file from univ2. 
 #searches latest ETH/DAI tx since block number and uses the tx to calculate eth price
 #todo add error handling for invalid block arg
 def getEthPriceAtBlock(block):
